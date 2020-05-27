@@ -1,9 +1,9 @@
 ;******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
-;* File Name          : startup_stm32f030x6.s
+;* File Name          : startup_stm32f030xc.s
 ;* Author             : MCD Application Team
 ;* Version            : V2.3.0
 ;* Date               : 27-May-2016
-;* Description        : STM32F030x4/STM32F030x6 devices vector table for MDK-ARM toolchain.
+;* Description        : STM32F030xc/STM32F030xb devices vector table for MDK-ARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
 ;*                      - Set the initial PC == Reset_Handler
@@ -108,19 +108,20 @@ __Vectors       DCD     __initial_sp                   ; Top of Stack
                 DCD     TIM1_CC_IRQHandler             ; TIM1 Capture Compare
                 DCD     0                              ; Reserved
                 DCD     TIM3_IRQHandler                ; TIM3
-                DCD     0                              ; Reserved
-                DCD     0                              ; Reserved
+                DCD     TIM6_IRQHandler                ; TIM6
+                DCD     TIM7_IRQHandler                ; TIM7
                 DCD     TIM14_IRQHandler               ; TIM14
-                DCD     0                              ; Reserved
+                DCD     TIM15_IRQHandler               ; TIM15
                 DCD     TIM16_IRQHandler               ; TIM16
                 DCD     TIM17_IRQHandler               ; TIM17
                 DCD     I2C1_IRQHandler                ; I2C1
-                DCD     0                              ; Reserved
+                DCD     I2C2_IRQHandler                ; I2C2
                 DCD     SPI1_IRQHandler                ; SPI1
-                DCD     0                              ; Reserved
+                DCD     SPI2_IRQHandler                ; SPI2
                 DCD     USART1_IRQHandler              ; USART1
-
-
+                DCD     USART2_IRQHandler              ; USART2
+                DCD     USART3_6_IRQHandler            ; USART3, USART4, USART5, USART6
+                
 __Vectors_End
 
 __Vectors_Size  EQU  __Vectors_End - __Vectors
@@ -178,13 +179,20 @@ Default_Handler PROC
                 EXPORT  TIM1_BRK_UP_TRG_COM_IRQHandler [WEAK]
                 EXPORT  TIM1_CC_IRQHandler             [WEAK]
                 EXPORT  TIM3_IRQHandler                [WEAK]
+                EXPORT  TIM6_IRQHandler                [WEAK]
+                EXPORT  TIM7_IRQHandler                [WEAK]
                 EXPORT  TIM14_IRQHandler               [WEAK]
+                EXPORT  TIM15_IRQHandler               [WEAK]
                 EXPORT  TIM16_IRQHandler               [WEAK]
                 EXPORT  TIM17_IRQHandler               [WEAK]
                 EXPORT  I2C1_IRQHandler                [WEAK]
+                EXPORT  I2C2_IRQHandler                [WEAK]
                 EXPORT  SPI1_IRQHandler                [WEAK]
+                EXPORT  SPI2_IRQHandler                [WEAK]
                 EXPORT  USART1_IRQHandler              [WEAK]
- 
+                EXPORT  USART2_IRQHandler              [WEAK]
+                EXPORT  USART3_6_IRQHandler            [WEAK]
+
 
 WWDG_IRQHandler
 RTC_IRQHandler
@@ -200,12 +208,19 @@ ADC1_IRQHandler
 TIM1_BRK_UP_TRG_COM_IRQHandler
 TIM1_CC_IRQHandler
 TIM3_IRQHandler
+TIM6_IRQHandler
+TIM7_IRQHandler
 TIM14_IRQHandler
+TIM15_IRQHandler
 TIM16_IRQHandler
 TIM17_IRQHandler
 I2C1_IRQHandler
+I2C2_IRQHandler
 SPI1_IRQHandler
+SPI2_IRQHandler
 USART1_IRQHandler
+USART2_IRQHandler
+USART3_6_IRQHandler
 
                 B       .
 

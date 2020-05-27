@@ -1,9 +1,9 @@
 ;******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
-;* File Name          : startup_stm32f030x6.s
+;* File Name          : startup_stm32f070x6.s
 ;* Author             : MCD Application Team
 ;* Version            : V2.3.0
 ;* Date               : 27-May-2016
-;* Description        : STM32F030x4/STM32F030x6 devices vector table for MDK-ARM toolchain.
+;* Description        : STM32F070x4/STM32F070x6 devices vector table for MDK-ARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
 ;*                      - Set the initial PC == Reset_Handler
@@ -119,7 +119,10 @@ __Vectors       DCD     __initial_sp                   ; Top of Stack
                 DCD     SPI1_IRQHandler                ; SPI1
                 DCD     0                              ; Reserved
                 DCD     USART1_IRQHandler              ; USART1
-
+                DCD     USART2_IRQHandler              ; USART2
+                DCD     0                              ; Reserved
+                DCD     0                              ; Reserved
+                DCD     USB_IRQHandler                 ; USB
 
 __Vectors_End
 
@@ -132,6 +135,34 @@ Reset_Handler    PROC
                  EXPORT  Reset_Handler                 [WEAK]
         IMPORT  __main
         IMPORT  SystemInit  
+
+
+
+        LDR     R0, =__initial_sp          ; set stack pointer 
+        MSR     MSP, R0  
+
+;;Check if boot space corresponds to test memory 
+
+        LDR R0,=0x00000004
+        LDR R1, [R0]
+        LSRS R1, R1, #24
+        LDR R2,=0x1F
+        CMP R1, R2
+        
+        BNE ApplicationStart  
+     
+;; SYSCFG clock enable    
+     
+        LDR R0,=0x40021018 
+        LDR R1,=0x00000001
+        STR R1, [R0]
+        
+;; Set CFGR1 register with flash memory remap at address 0
+
+        LDR R0,=0x40010000 
+        LDR R1,=0x00000000
+        STR R1, [R0]
+ApplicationStart
                  LDR     R0, =SystemInit
                  BLX     R0
                  LDR     R0, =__main
@@ -173,8 +204,8 @@ Default_Handler PROC
                 EXPORT  EXTI4_15_IRQHandler            [WEAK]
                 EXPORT  DMA1_Channel1_IRQHandler       [WEAK]
                 EXPORT  DMA1_Channel2_3_IRQHandler     [WEAK]
-                EXPORT  DMA1_Channel4_5_IRQHandler     [WEAK]
-                EXPORT  ADC1_IRQHandler                [WEAK]
+                EXPORT  DMA1_Channel4_5_IRQHandler [WEAK]
+                EXPORT  ADC1_IRQHandler           [WEAK]
                 EXPORT  TIM1_BRK_UP_TRG_COM_IRQHandler [WEAK]
                 EXPORT  TIM1_CC_IRQHandler             [WEAK]
                 EXPORT  TIM3_IRQHandler                [WEAK]
@@ -184,7 +215,9 @@ Default_Handler PROC
                 EXPORT  I2C1_IRQHandler                [WEAK]
                 EXPORT  SPI1_IRQHandler                [WEAK]
                 EXPORT  USART1_IRQHandler              [WEAK]
- 
+                EXPORT  USART2_IRQHandler              [WEAK]
+                EXPORT  USB_IRQHandler                 [WEAK]
+
 
 WWDG_IRQHandler
 RTC_IRQHandler
@@ -196,7 +229,7 @@ EXTI4_15_IRQHandler
 DMA1_Channel1_IRQHandler
 DMA1_Channel2_3_IRQHandler
 DMA1_Channel4_5_IRQHandler
-ADC1_IRQHandler 
+ADC1_IRQHandler
 TIM1_BRK_UP_TRG_COM_IRQHandler
 TIM1_CC_IRQHandler
 TIM3_IRQHandler
@@ -206,6 +239,8 @@ TIM17_IRQHandler
 I2C1_IRQHandler
 SPI1_IRQHandler
 USART1_IRQHandler
+USART2_IRQHandler
+USB_IRQHandler
 
                 B       .
 

@@ -1,9 +1,9 @@
 ;******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
-;* File Name          : startup_stm32f030x6.s
+;* File Name          : startup_stm32f038xx.s
 ;* Author             : MCD Application Team
 ;* Version            : V2.3.0
 ;* Date               : 27-May-2016
-;* Description        : STM32F030x4/STM32F030x6 devices vector table for MDK-ARM toolchain.
+;* Description        : STM32F038xx devices vector table for MDK-ARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
 ;*                      - Set the initial PC == Reset_Handler
@@ -106,7 +106,7 @@ __Vectors       DCD     __initial_sp                   ; Top of Stack
                 DCD     ADC1_IRQHandler                ; ADC1 
                 DCD     TIM1_BRK_UP_TRG_COM_IRQHandler ; TIM1 Break, Update, Trigger and Commutation
                 DCD     TIM1_CC_IRQHandler             ; TIM1 Capture Compare
-                DCD     0                              ; Reserved
+                DCD     TIM2_IRQHandler                ; TIM2
                 DCD     TIM3_IRQHandler                ; TIM3
                 DCD     0                              ; Reserved
                 DCD     0                              ; Reserved
@@ -177,6 +177,7 @@ Default_Handler PROC
                 EXPORT  ADC1_IRQHandler                [WEAK]
                 EXPORT  TIM1_BRK_UP_TRG_COM_IRQHandler [WEAK]
                 EXPORT  TIM1_CC_IRQHandler             [WEAK]
+                EXPORT  TIM2_IRQHandler                [WEAK]
                 EXPORT  TIM3_IRQHandler                [WEAK]
                 EXPORT  TIM14_IRQHandler               [WEAK]
                 EXPORT  TIM16_IRQHandler               [WEAK]
@@ -184,7 +185,7 @@ Default_Handler PROC
                 EXPORT  I2C1_IRQHandler                [WEAK]
                 EXPORT  SPI1_IRQHandler                [WEAK]
                 EXPORT  USART1_IRQHandler              [WEAK]
- 
+
 
 WWDG_IRQHandler
 RTC_IRQHandler
@@ -196,9 +197,10 @@ EXTI4_15_IRQHandler
 DMA1_Channel1_IRQHandler
 DMA1_Channel2_3_IRQHandler
 DMA1_Channel4_5_IRQHandler
-ADC1_IRQHandler 
+ADC1_IRQHandler
 TIM1_BRK_UP_TRG_COM_IRQHandler
 TIM1_CC_IRQHandler
+TIM2_IRQHandler
 TIM3_IRQHandler
 TIM14_IRQHandler
 TIM16_IRQHandler
