@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32f030x6.s
+  * @file      startup_stm32f042x6.s
   * @author    MCD Application Team
   * @version   V2.3.0
   * @date      27-May-2016
-  * @brief     STM32F030x4/STM32F030x6 devices vector table for Atollic TrueSTUDIO toolchain.
+  * @brief     STM32F042x4/STM32F042x6 devices vector table for Atollic TrueSTUDIO toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -60,6 +60,15 @@ defined in linker script */
 /* end address for the .bss section. defined in linker script */
 .word _ebss
 
+/**
+ * @brief  This is the code that gets called when the processor first
+ *          starts execution following a reset event. Only the absolutely
+ *          necessary set is performed, after which the application
+ *          supplied main() routine is called.
+ * @param  None
+ * @retval : None
+*/
+
   .section .text.Reset_Handler
   .weak Reset_Handler
   .type Reset_Handler, %function
@@ -67,6 +76,27 @@ Reset_Handler:
   ldr   r0, =_estack
   mov   sp, r0          /* set stack pointer */
 
+/*Check if boot space corresponds to test memory*/
+ 
+    LDR R0,=0x00000004
+    LDR R1, [R0]
+    LSRS R1, R1, #24
+    LDR R2,=0x1F
+    CMP R1, R2
+    BNE ApplicationStart
+
+ /*SYSCFG clock enable*/
+
+    LDR R0,=0x40021018
+    LDR R1,=0x00000001
+    STR R1, [R0]
+
+/*Set CFGR1 register with flash memory remap at address 0*/
+    LDR R0,=0x40010000
+    LDR R1,=0x00000000
+    STR R1, [R0]
+
+ApplicationStart:
 /* Copy the data segment initializers from flash to SRAM */
   movs r1, #0
   b LoopCopyDataInit
@@ -153,21 +183,21 @@ g_pfnVectors:
   .word  PendSV_Handler
   .word  SysTick_Handler
   .word  WWDG_IRQHandler                   /* Window WatchDog              */
-  .word  0                                 /* Reserved                     */
+  .word  PVD_VDDIO2_IRQHandler             /* PVD and VDDIO2 through EXTI Line detect */
   .word  RTC_IRQHandler                    /* RTC through the EXTI line    */
   .word  FLASH_IRQHandler                  /* FLASH                        */
-  .word  RCC_IRQHandler                    /* RCC                          */
+  .word  RCC_CRS_IRQHandler                /* RCC and CRS                  */
   .word  EXTI0_1_IRQHandler                /* EXTI Line 0 and 1            */
   .word  EXTI2_3_IRQHandler                /* EXTI Line 2 and 3            */
   .word  EXTI4_15_IRQHandler               /* EXTI Line 4 to 15            */
-  .word  0                                 /* Reserved                     */
+  .word  TSC_IRQHandler                    /* TSC                          */
   .word  DMA1_Channel1_IRQHandler          /* DMA1 Channel 1               */
   .word  DMA1_Channel2_3_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
   .word  DMA1_Channel4_5_IRQHandler        /* DMA1 Channel 4 and Channel 5 */
   .word  ADC1_IRQHandler                   /* ADC1                         */
   .word  TIM1_BRK_UP_TRG_COM_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
   .word  TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
-  .word  0                                 /* Reserved                     */
+  .word  TIM2_IRQHandler                   /* TIM2                         */
   .word  TIM3_IRQHandler                   /* TIM3                         */
   .word  0                                 /* Reserved                     */
   .word  0                                 /* Reserved                     */
@@ -178,12 +208,12 @@ g_pfnVectors:
   .word  I2C1_IRQHandler                   /* I2C1                         */
   .word  0                                 /* Reserved                     */
   .word  SPI1_IRQHandler                   /* SPI1                         */
-  .word  0                                 /* Reserved                     */
+  .word  SPI2_IRQHandler                   /* SPI2                         */
   .word  USART1_IRQHandler                 /* USART1                       */
+  .word  USART2_IRQHandler                 /* USART2                       */
   .word  0                                 /* Reserved                     */
-  .word  0                                 /* Reserved                     */
-  .word  0                                 /* Reserved                     */
-  .word  0                                 /* Reserved                     */
+  .word  CEC_CAN_IRQHandler                /* CEC and CAN                  */
+  .word  USB_IRQHandler                    /* USB                          */
 
 /*******************************************************************************
 *
@@ -211,14 +241,17 @@ g_pfnVectors:
   .weak      WWDG_IRQHandler
   .thumb_set WWDG_IRQHandler,Default_Handler
 
+  .weak      PVD_VDDIO2_IRQHandler
+  .thumb_set PVD_VDDIO2_IRQHandler,Default_Handler
+
   .weak      RTC_IRQHandler
   .thumb_set RTC_IRQHandler,Default_Handler
 
   .weak      FLASH_IRQHandler
   .thumb_set FLASH_IRQHandler,Default_Handler
 
-  .weak      RCC_IRQHandler
-  .thumb_set RCC_IRQHandler,Default_Handler
+  .weak      RCC_CRS_IRQHandler
+  .thumb_set RCC_CRS_IRQHandler,Default_Handler
 
   .weak      EXTI0_1_IRQHandler
   .thumb_set EXTI0_1_IRQHandler,Default_Handler
@@ -228,6 +261,9 @@ g_pfnVectors:
 
   .weak      EXTI4_15_IRQHandler
   .thumb_set EXTI4_15_IRQHandler,Default_Handler
+
+  .weak      TSC_IRQHandler
+  .thumb_set TSC_IRQHandler,Default_Handler
 
   .weak      DMA1_Channel1_IRQHandler
   .thumb_set DMA1_Channel1_IRQHandler,Default_Handler
@@ -247,6 +283,9 @@ g_pfnVectors:
   .weak      TIM1_CC_IRQHandler
   .thumb_set TIM1_CC_IRQHandler,Default_Handler
 
+  .weak      TIM2_IRQHandler
+  .thumb_set TIM2_IRQHandler,Default_Handler
+
   .weak      TIM3_IRQHandler
   .thumb_set TIM3_IRQHandler,Default_Handler
 
@@ -265,8 +304,20 @@ g_pfnVectors:
   .weak      SPI1_IRQHandler
   .thumb_set SPI1_IRQHandler,Default_Handler
 
+  .weak      SPI2_IRQHandler
+  .thumb_set SPI2_IRQHandler,Default_Handler
+
   .weak      USART1_IRQHandler
   .thumb_set USART1_IRQHandler,Default_Handler
+
+  .weak      USART2_IRQHandler
+  .thumb_set USART2_IRQHandler,Default_Handler
+
+  .weak      CEC_CAN_IRQHandler
+  .thumb_set CEC_CAN_IRQHandler,Default_Handler
+
+  .weak      USB_IRQHandler
+  .thumb_set USB_IRQHandler,Default_Handler
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

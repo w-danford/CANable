@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32f030x6.s
+  * @file      startup_stm32f038xx.s
   * @author    MCD Application Team
   * @version   V2.3.0
   * @date      27-May-2016
-  * @brief     STM32F030x4/STM32F030x6 devices vector table for Atollic TrueSTUDIO toolchain.
+  * @brief     STM32F038xx devices vector table for Atollic TrueSTUDIO toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -167,7 +167,7 @@ g_pfnVectors:
   .word  ADC1_IRQHandler                   /* ADC1                         */
   .word  TIM1_BRK_UP_TRG_COM_IRQHandler    /* TIM1 Break, Update, Trigger and Commutation */
   .word  TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
-  .word  0                                 /* Reserved                     */
+  .word  TIM2_IRQHandler                   /* TIM2                         */
   .word  TIM3_IRQHandler                   /* TIM3                         */
   .word  0                                 /* Reserved                     */
   .word  0                                 /* Reserved                     */
@@ -246,6 +246,9 @@ g_pfnVectors:
 
   .weak      TIM1_CC_IRQHandler
   .thumb_set TIM1_CC_IRQHandler,Default_Handler
+
+  .weak      TIM2_IRQHandler
+  .thumb_set TIM2_IRQHandler,Default_Handler
 
   .weak      TIM3_IRQHandler
   .thumb_set TIM3_IRQHandler,Default_Handler

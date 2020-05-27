@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32f030x6.s
+  * @file      startup_stm32f070x6.s
   * @author    MCD Application Team
   * @version   V2.3.0
   * @date      27-May-2016
-  * @brief     STM32F030x4/STM32F030x6 devices vector table for Atollic TrueSTUDIO toolchain.
+  * @brief     STM32F070x4/STM32F070x6 devices vector table for Atollic TrueSTUDIO toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -60,6 +60,15 @@ defined in linker script */
 /* end address for the .bss section. defined in linker script */
 .word _ebss
 
+/**
+ * @brief  This is the code that gets called when the processor first
+ *          starts execution following a reset event. Only the absolutely
+ *          necessary set is performed, after which the application
+ *          supplied main() routine is called.
+ * @param  None
+ * @retval : None
+*/
+
   .section .text.Reset_Handler
   .weak Reset_Handler
   .type Reset_Handler, %function
@@ -67,6 +76,27 @@ Reset_Handler:
   ldr   r0, =_estack
   mov   sp, r0          /* set stack pointer */
 
+/*Check if boot space corresponds to test memory*/
+ 
+    LDR R0,=0x00000004
+    LDR R1, [R0]
+    LSRS R1, R1, #24
+    LDR R2,=0x1F
+    CMP R1, R2
+    BNE ApplicationStart
+
+ /*SYSCFG clock enable*/
+
+    LDR R0,=0x40021018
+    LDR R1,=0x00000001
+    STR R1, [R0]
+
+/*Set CFGR1 register with flash memory remap at address 0*/
+    LDR R0,=0x40010000
+    LDR R1,=0x00000000
+    STR R1, [R0]
+
+ApplicationStart:
 /* Copy the data segment initializers from flash to SRAM */
   movs r1, #0
   b LoopCopyDataInit
@@ -180,10 +210,10 @@ g_pfnVectors:
   .word  SPI1_IRQHandler                   /* SPI1                         */
   .word  0                                 /* Reserved                     */
   .word  USART1_IRQHandler                 /* USART1                       */
+  .word  USART2_IRQHandler                 /* USART2                       */
   .word  0                                 /* Reserved                     */
   .word  0                                 /* Reserved                     */
-  .word  0                                 /* Reserved                     */
-  .word  0                                 /* Reserved                     */
+  .word  USB_IRQHandler                    /* USB                          */
 
 /*******************************************************************************
 *
@@ -267,6 +297,12 @@ g_pfnVectors:
 
   .weak      USART1_IRQHandler
   .thumb_set USART1_IRQHandler,Default_Handler
+
+  .weak      USART2_IRQHandler
+  .thumb_set USART2_IRQHandler,Default_Handler
+
+  .weak      USB_IRQHandler
+  .thumb_set USB_IRQHandler,Default_Handler
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
