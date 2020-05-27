@@ -1,6 +1,6 @@
 /**************************************************************************//**
- * @file     core_cmFunc.h
- * @brief    CMSIS Cortex-M Core Function Access Header File
+ * @file     core_cmInstr.h
+ * @brief    CMSIS Cortex-M Core Instruction Access Header File
  * @version  V4.30
  * @date     20. October 2015
  ******************************************************************************/
@@ -38,13 +38,13 @@
   #pragma clang system_header   /* treat file as system include file */
 #endif
 
-#ifndef __CORE_CMFUNC_H
-#define __CORE_CMFUNC_H
+#ifndef __CORE_CMINSTR_H
+#define __CORE_CMINSTR_H
 
 
-/* ###########################  Core Function Access  ########################### */
-/** \ingroup  CMSIS_Core_FunctionInterface
-    \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+/* ##########################  Core Instruction Access  ######################### */
+/** \defgroup CMSIS_Core_InstructionInterface CMSIS Core Instruction Interface
+  Access to dedicated instructions
   @{
 */
 
@@ -82,6 +82,6 @@
 
 #endif
 
-/*@} end of CMSIS_Core_RegAccFunctions */
+/*@}*/ /* end of group CMSIS_Core_InstructionInterface */
 
-#endif /* __CORE_CMFUNC_H */
+#endif /* __CORE_CMINSTR_H */
