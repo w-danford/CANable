@@ -1,20 +1,10 @@
 /**
   ******************************************************************************
-  * @file    stm32f0xx_hal_msp_template.c
+  * @file    stm32f0xx_ll_crs.h
   * @author  MCD Application Team
   * @version V1.4.0
   * @date    27-May-2016
-  * @brief   HAL MSP module.
-  *          This file template is located in the HAL folder and should be copied 
-  *          to the user folder.
-  *         
-  @verbatim
- ===============================================================================
-                     ##### How to use this driver #####
- ===============================================================================
-    [..]
-
-  @endverbatim
+  * @brief   CRS LL module driver.
   ******************************************************************************
   * @attention
   *
@@ -43,66 +33,53 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-  */ 
+  */
+#if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f0xx_hal.h"
+#include "stm32f0xx_ll_crs.h"
+#include "stm32f0xx_ll_bus.h"
 
-/** @addtogroup STM32F0xx_HAL_Driver
+/** @addtogroup STM32F0xx_LL_Driver
   * @{
   */
 
-/** @defgroup HAL_MSP HAL MSP module driver
-  * @brief HAL MSP module.
+#if defined(CRS)
+
+/** @defgroup CRS_LL CRS
   * @{
   */
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
+/* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/* Private constants ---------------------------------------------------------*/
+/* Private macros ------------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
-/* Private functions ---------------------------------------------------------*/
 
-/** @defgroup HAL_MSP_Private_Functions HAL MSP Private Functions
+/* Exported functions --------------------------------------------------------*/
+/** @addtogroup CRS_LL_Exported_Functions
+  * @{
+  */
+
+/** @addtogroup CRS_LL_EF_Init
   * @{
   */
 
 /**
-  * @brief  Initializes the Global MSP.
-  * @retval None
+  * @brief  De-Initializes CRS peripheral registers to their default reset values.
+  * @retval An ErrorStatus enumeration value:
+  *          - SUCCESS: CRS registers are de-initialized
+  *          - ERROR: not applicable
   */
-void HAL_MspInit(void)
+ErrorStatus LL_CRS_DeInit(void)
 {
+  LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_CRS);
+  LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_CRS);
 
+  return  SUCCESS;
 }
 
-/**
-  * @brief  DeInitializes the Global MSP. 
-  * @retval None
-  */
-void HAL_MspDeInit(void)
-{
 
-}
-
-/**
-  * @brief  Initializes the PPP MSP.
-  * @retval None
-  */
-void HAL_PPP_MspInit(void)
-{
-
-}
-
-/**
-  * @brief  DeInitializes the PPP MSP. 
-  * @retval None
-  */
-void HAL_PPP_MspDeInit(void)
-{
-
-}
 
 /**
   * @}
@@ -115,5 +92,13 @@ void HAL_PPP_MspDeInit(void)
 /**
   * @}
   */
+
+#endif /* defined(CRS) */
+
+/**
+  * @}
+  */
+  
+#endif /* USE_FULL_LL_DRIVER */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
