@@ -1,0 +1,89 @@
+CANable is accessed on a Linux paltform at /dev/ttyACMn, in Windows at COMMn.
+
+CANable understands and sends plain test strings.
+The first chatacter is a letter specifying the command to execute,
+or defining the content of the rest of the string.
+All strings end with the '\r' character, as the 'line ending' character.
+This is fixed.  The line ending cannot be selected to match the OS
+native line ending (\n for 'nix, \r\n for DOS/Win, \r for MAC).
+Appropriate parsing must be implemented to detect '\r' as end of string.
+
+Open channel:
+   This is a single character command string: "O\r"
+   Activates the CAN port listening for messages
+
+Close channel:
+   This is a single character command string: "C\r"
+   Deactivates the CAN port, port goes off line, transceiver goes tri-state.
+
+Set bus bit rate:
+   This is a two character command string: "Sn\r"
+   where n is a digit as follows
+       0    10K
+       1    20K
+       2    50K
+       3   100K
+       4   125K
+       5   250K
+       6   500K
+       7   750K
+       8  1000K
+    Bitrate can only be set while port is Activated / Open.
+    Default setting, every time powered up by connecting to USB host, is 125K.
+    Bitrate setting is statically retained over multiple close / open channel.
+
+Request CAN port status:
+   This is a single character request (command) string: "b\r"
+   The response string is "bn\r"
+   where n has a value from 0 to 7 representing the three flags:
+      BusOff:BusHeavy:BusErrWarn
+   Caution: the value character, n, is ASCII 0 through 7, not a binary byte.
+
+Set CAN port mode
+   This is a two character command string: "Mn\r" or "mn\r"
+   where n is a digit as follows
+       0  normal (Rx,Tx)
+       1  silent (passive listen only, does not participate in CAN ack handskke)
+
+
+Tx/Rx data frame:
+   These are multibyte message strings.
+   When sent the CAN message is sent on the attached CAN bus.
+   When read back they are an incomming message received from the CAN bus.
+   Formats are:
+      "t....\r"   SID data frame message
+      "T....\r"   EID data frame message
+      "r....\r"   SID remote request frame message
+      "R....\r"   EID remote request frame message
+
+   The specific message content is a hex-ascii string.
+
+   For a SID frame the first three hex-ascii characters are the 11 bit SID,
+   the fourth hex-ascii character is the data byte count length,
+   the following hex-ascii characters are the data bytes (two characters per byte).
+   SID ranges from 0 to 0x7FF
+
+   For an EID frame the first eight hex-ascii characters are the 29 bit EID,
+   followed by the data byte count length character, then the data characters.
+
+      SID characters:   SID[3],DataCnt,DataBytes[2*DataCnt]
+      EID characters:   EID[8],DataCnt,DataBytes[2*DataCnt]
+
+   Remote request frames are a request that a node able to supply the data
+   corresponding to the particular SID or EID reply with a data frame containing
+   that message having DataCnt bytes.  Remote request frames have only SID or EID
+   and a DataCnt as a request for the amount of data bytes in the reply.
+   Remote request frames never have any actual data.
+
+      Remote request SID characters:   SID[3],DataCnt
+      Remote request EID characters:   EID[8],DataCnt
+
+
+The CAN SID limits:
+   Per Bosch CAN spec 2.0, 1991 (ISO 11898-1) "The IDENTIFIER’s length is 11 bits
+    and corresponds to the Base ID in Extended Format. These bits are transmitted
+    in the order from ID-28 to ID-18. The least significant bit is ID-18. The 7
+    most significant bits (ID-28 - ID-22) must not be all ’recessive’."
+   This restriction means the lowest allowable value of SID is 0x010 = 16.
+
+
